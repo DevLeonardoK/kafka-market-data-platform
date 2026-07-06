@@ -1,0 +1,31 @@
+services:
+  kafka_controller:
+    image: apache/kafka:4.3.1
+    container_name: kafka_controller
+    restart: on-failure
+    ports:
+      - 5090:5090
+    environment:
+      - KAFKA_NODE_ID=1 #Identificador
+      - KAFKA_PROCESS_ROLES=controller #Regra de atuação
+
+      #Em quais portas esse servidor kafka vai estar 'escutando' conexões
+      - KAFKA_LISTENERS=CONTROLLER://:5090
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka_controller:5090
+  kafka_broker_1:
+    image: apache/kafka:4.3.1
+    container_name: kafka_broker_1
+    restart: on-failure
+    ports:
+      - 5091:5091
+    environment:
+      - KAFKA_NODE_ID=2
+      - KAFKA_PROCESS_ROLES=broker
+      - KAFKA_LISTENERS=INTERNAL://:5091
+      - KAFKA_ADVERTISED_LISTENERS=INTERNAL://kafka_broker_1:5091
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@kafka_controller:5090
+      - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
