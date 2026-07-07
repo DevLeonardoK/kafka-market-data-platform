@@ -1,0 +1,9 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY python/kafka_market_data_raw_producer.py /app/
+
+RUN pip install faker kafka-python
+
+CMD ["python", "kafka_market_data_raw_producer.py"]

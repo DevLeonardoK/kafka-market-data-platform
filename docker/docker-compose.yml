@@ -30,6 +30,7 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_NUM_PARTITIONS=3
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
     depends_on:
       - kafka_controller
   kafka_broker_2:
@@ -48,6 +49,7 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_NUM_PARTITIONS=3
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
     depends_on:
       - kafka_controller
   
@@ -67,6 +69,7 @@ services:
       - KAFKA_INTER_BROKER_LISTENER_NAME=INTERNAL
       - KAFKA_CONTROLLER_LISTENER_NAMES=CONTROLLER
       - KAFKA_NUM_PARTITIONS=3
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=false
   kafka_admin_client:
     container_name: kafka_admin_client
     build:
@@ -77,6 +80,17 @@ services:
     depends_on:
       - kafka_broker_1
       - kafka_broker_2
+      - kafka_broker_3
+  market_data_raw_producer_1:
+    container_name: market_data_raw_producer_1
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.market_data_raw_producer_1
+    ports:
+      - 5110:5110
+    depends_on:
+      - kafka_admin_client
+
   kafka_ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka_ui
