@@ -1,4 +1,5 @@
 from kafka.admin import KafkaAdminClient
+from kafka.errors import TopicAlreadyExistsError
 
 
 kafka_admin_client = KafkaAdminClient(
@@ -9,6 +10,8 @@ kafka_admin_client = KafkaAdminClient(
     ],
     client_id = "kafka_admin_client"
 )
+
+market_data_raw_topic = "market_data_raw_topic"
 
 try:
 
@@ -22,7 +25,7 @@ try:
         validate_only=False
     )
 
-except Exception:
-    raise
+except TopicAlreadyExistsError:
+    pass
 finally:
     kafka_admin_client.close()
