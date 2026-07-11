@@ -4,6 +4,6 @@ WORKDIR /app
 
 COPY python/kafka_market_data_raw_producer.py /app/
 
-RUN pip install faker kafka-python
+RUN pip install randomtimestamp kafka-python
 
 CMD ["python", "kafka_market_data_raw_producer.py"]

@@ -1,10 +1,9 @@
 from kafka import KafkaProducer
 import json
-from faker import Faker
-from datetime import datetime
 from time import sleep
-
-faker = Faker()
+import random
+from randomtimestamp import randomtimestamp
+from datetime import datetime
 
 bootstrap_servers = [
     "kafka_broker_1:5091",
@@ -53,15 +52,17 @@ kafka_market_data_producer = KafkaProducer(
     )
 
 def data_market_raw_generate():
+    year = datetime.today().year
+    today_day = datetime.today().day
     data_market_raw = {
-        "id": faker.random_int(min=1,step=1),
-        "symbol": faker.random_element(elements=symbol_names),
-        "price": faker.random_number(fix_len=True, digits=2),
-        "broker": faker.random_element(elements=brokers_names),
-        "quantity": faker.random_int(min=1, max=1000),
-        "currency": faker.random_element(currency_names),
-        "exchange": faker.random_element(exchange_local_names),
-        "timestamp": faker.date_time().isoformat()
+        "id": random.randrange(start=1, step=1, stop=10000000),
+        "symbol": random.choice(symbol_names),
+        "price": random.uniform(40, 300),
+        "broker": random.choice(brokers_names),
+        "quantity": random.randint(1,1000),
+        "currency": random.choice(currency_names),
+        "exchange": random.choice(exchange_local_names),
+        "timestamp": randomtimestamp(start_year=year, end_year=year, start=today_day, text=True)
     }
 
     return data_market_raw
