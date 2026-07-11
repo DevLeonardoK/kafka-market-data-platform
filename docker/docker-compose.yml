@@ -81,6 +81,18 @@ services:
       - kafka_broker_1
       - kafka_broker_2
       - kafka_broker_3
+  
+  apache_spark_master:
+    image: apache/spark:4.0.3
+    container_name: apache_spark_master
+    restart: on-failure
+    ports:
+      - 7077:7077
+      - 8090:8080
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master #Initialize the master, boosted java knows spark path
+    depends_on:
+      - kafka_admin_client
+
   market_data_raw_producer_1:
     container_name: market_data_raw_producer_1
     build:
