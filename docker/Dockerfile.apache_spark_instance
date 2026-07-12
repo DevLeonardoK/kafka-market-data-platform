@@ -1,0 +1,7 @@
+FROM apache/spark:4.0.3
+
+WORKDIR /opt/spark/work-dir
+
+COPY python/spark_instance.py .
+
+CMD ["/opt/spark/bin/spark-submit", "spark_instance.py"]

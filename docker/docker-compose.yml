@@ -82,9 +82,9 @@ services:
       - kafka_broker_2
       - kafka_broker_3
   
-  apache_spark_master:
+  apache-spark-master:
     image: apache/spark:4.0.3
-    container_name: apache_spark_master
+    container_name: apache-spark-master
     restart: on-failure
     ports:
       - 7077:7077
@@ -92,7 +92,34 @@ services:
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.master.Master #Initialize the master, boosted java knows spark path
     depends_on:
       - kafka_admin_client
-
+  
+  apache-spark-worker-1:
+    image: apache/spark:4.0.3
+    container_name: apache-spark-worker-1
+    restart: on-failure
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://apache-spark-master:7077
+    environment:
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_WORKER_CORES=3
+    depends_on:
+      - apache-spark-master
+  apache-spark-worker-2:
+    image: apache/spark:4.0.3
+    container_name: apache-spark-worker-2
+    restart: on-failure
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://apache-spark-master:7077
+    environment:
+      - SPARK_WORKER_MEMORY=2g
+      - SPARK_WORKER_CORES=3
+    depends_on:
+      - apache-spark-master
+  market_data_spark:
+    container_name: market_data_spark
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.apache_spark_instance
+    depends_on:
+      - apache-spark-master
   market_data_raw_producer_1:
     container_name: market_data_raw_producer_1
     build:
@@ -101,7 +128,8 @@ services:
     ports:
       - 5110:5110
     depends_on:
-      - kafka_admin_client
+      - apache-spark-worker-1
+      - apache-spark-worker-2
 
   kafka_ui:
     image: provectuslabs/kafka-ui:latest
