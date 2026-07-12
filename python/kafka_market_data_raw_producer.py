@@ -53,7 +53,6 @@ kafka_market_data_producer = KafkaProducer(
 
 def data_market_raw_generate():
     year = datetime.today().year
-    today_day = datetime.today().day
     data_market_raw = {
         "id": random.randrange(start=1, step=1, stop=10000000),
         "symbol": random.choice(symbol_names),
@@ -62,7 +61,7 @@ def data_market_raw_generate():
         "quantity": random.randint(1,1000),
         "currency": random.choice(currency_names),
         "exchange": random.choice(exchange_local_names),
-        "timestamp": randomtimestamp(start_year=year, end_year=year, start=today_day, text=True)
+        "timestamp": datetime.now().timestamp()
     }
 
     return data_market_raw
