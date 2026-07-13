@@ -4,4 +4,7 @@ WORKDIR /opt/spark/work-dir
 
 COPY python/spark_instance.py .
 
-CMD ["/opt/spark/bin/spark-submit", "spark_instance.py"]
+CMD ["/opt/spark/bin/spark-submit", \
+     "--packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.3", \
+     "--conf", "spark.jars.ivy=/tmp/.ivy2", \
+     "spark_instance.py"]
