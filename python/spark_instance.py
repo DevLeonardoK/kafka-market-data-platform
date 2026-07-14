@@ -18,16 +18,23 @@ try:
         .option("startingOffsets", "latest")
         .load()
     )
-
+#+- ~StreamingDataSourceV2ScanRelation[key#7, value#8, topic#9, partition#10, offset#11L, timestamp#12, timestampType#13] KafkaTable
     query = (
         df.select(
             F.col("key").cast(StringType()),
-            F.col("value").cast(StringType())
+            F.col("value").cast(StringType()),
+            F.col("topic"),
+            F.col("partition"),
+            F.col("offset"),
+            F.col("timestamp"),
+            F.col("timestampType").cast(StringType()),
         ).writeStream.format("console").option("truncate", "false")
         .start()
     )
 
     query.awaitTermination()
+
+    print(df.printSchema())
 
 except Exception:
     raise
