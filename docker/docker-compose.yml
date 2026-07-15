@@ -103,6 +103,8 @@ services:
       - SPARK_WORKER_CORES=3
     depends_on:
       - apache-spark-master
+    volumes:
+      - ../credential/projeto_data_credential.json:/opt/spark/work-dir/projeto_data_credential.json:ro
   apache-spark-worker-2:
     image: apache/spark:4.0.3
     container_name: apache-spark-worker-2
@@ -113,6 +115,8 @@ services:
       - SPARK_WORKER_CORES=3
     depends_on:
       - apache-spark-master
+    volumes:
+      - ../credential/projeto_data_credential.json:/opt/spark/work-dir/projeto_data_credential.json:ro
   market_data_spark:
     container_name: market_data_spark
     build:
