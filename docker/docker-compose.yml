@@ -99,8 +99,8 @@ services:
     restart: on-failure
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://apache-spark-master:7077
     environment:
-      - SPARK_WORKER_MEMORY=2g
-      - SPARK_WORKER_CORES=3
+      - SPARK_WORKER_MEMORY=3g
+      - SPARK_WORKER_CORES=2
     depends_on:
       - apache-spark-master
     volumes:
@@ -111,19 +111,26 @@ services:
     restart: on-failure
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://apache-spark-master:7077
     environment:
-      - SPARK_WORKER_MEMORY=2g
-      - SPARK_WORKER_CORES=3
+      - SPARK_WORKER_MEMORY=3g
+      - SPARK_WORKER_CORES=2
     depends_on:
       - apache-spark-master
     volumes:
       - ../credential/projeto_data_credential.json:/opt/spark/work-dir/projeto_data_credential.json:ro
-  market_data_spark:
-    container_name: market_data_spark
-    build:
-      context: ..
-      dockerfile: docker/Dockerfile.apache_spark_instance
+    
+  apache-spark-worker-3:
+    image: apache/spark:4.0.3
+    container_name: apache-spark-worker-3
+    restart: on-failure
+    command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://apache-spark-master:7077
+    environment:
+      - SPARK_WORKER_MEMORY=3g
+      - SPARK_WORKER_CORES=2
     depends_on:
       - apache-spark-master
+    volumes:
+      - ../credential/projeto_data_credential.json:/opt/spark/work-dir/projeto_data_credential.json:ro
+
   market_data_raw_producer_1:
     container_name: market_data_raw_producer_1
     build:
@@ -134,6 +141,21 @@ services:
     depends_on:
       - apache-spark-worker-1
       - apache-spark-worker-2
+      - apache-spark-worker-3
+  market_data_spark_bronze:
+    container_name: market_data_spark_bronze
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.apache_spark_bronze_ingest
+    depends_on:
+      - market_data_raw_producer_1
+  market_data_silver:
+    container_name: market_data_spark_silver
+    build:
+      context:  ..
+      dockerfile: docker/Dockerfile.apache_spark_silver_batch
+    depends_on:
+      - market_data_spark_bronze
 
   kafka_ui:
     image: provectuslabs/kafka-ui:latest
