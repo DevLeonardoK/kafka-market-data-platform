@@ -2,7 +2,7 @@ FROM apache/spark:4.0.3
 
 WORKDIR /opt/spark/work-dir
 
-COPY python/spark_instance.py .
+COPY python/spark_bronze_ingest.py .
 COPY credential/projeto_data_credential.json /opt/spark/work-dir/
 
 CMD ["/opt/spark/bin/spark-submit", \
@@ -14,5 +14,5 @@ CMD ["/opt/spark/bin/spark-submit", \
      "--conf", "spark.hadoop.fs.AbstractFileSystem.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS", \ 
      #old
      "--conf", "spark.hadoop.fs.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem", \
-     "spark_instance.py"]
+     "spark_bronze_ingest.py"]
 
