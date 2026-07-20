@@ -4,18 +4,14 @@ WORKDIR /opt/spark/work-dir
 
 COPY credential/projeto_data_credential.json .
 COPY python/spark_silver_batch.py .
-COPY credential/parquet_file.parquet .
 
-# CMD ["/opt/spark/bin/spark-submit", \
-#      "--packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.3,com.google.cloud.spark:spark-4.0-bigquery:0.44.2,com.google.cloud.bigdataoss:gcs-connector:hadoop3-2.2.21", \
-#      "--conf", "spark.jars.ivy=/tmp/.ivy2", \
-#      "--conf", "spark.hadoop.google.cloud.auth.service.account.enable=true", \
-#      "--conf", "spark.hadoop.google.cloud.auth.service.account.json.keyfile=/opt/spark/work-dir/projeto_data_credential.json", \
-#      #new
-#      "--conf", "spark.hadoop.fs.AbstractFileSystem.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS", \ 
-#      #old
-#      "--conf", "spark.hadoop.fs.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem", \
-#      "spark_instance.py"]
-
-
-CMD ["/opt/spark/bin/spark-submit", "spark_silver_batch.py"]
+CMD ["/opt/spark/bin/spark-submit", \
+     "--packages", "org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.3,com.google.cloud.spark:spark-4.0-bigquery:0.44.2,com.google.cloud.bigdataoss:gcs-connector:hadoop3-2.2.21", \
+     "--conf", "spark.jars.ivy=/tmp/.ivy2", \
+     "--conf", "spark.hadoop.google.cloud.auth.service.account.enable=true", \
+     "--conf", "spark.hadoop.google.cloud.auth.service.account.json.keyfile=/opt/spark/work-dir/projeto_data_credential.json", \
+     #new
+     "--conf", "spark.hadoop.fs.AbstractFileSystem.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS", \ 
+     #old
+     "--conf", "spark.hadoop.fs.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem", \
+     "spark_silver_batch.py"]
