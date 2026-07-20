@@ -79,7 +79,7 @@ if __name__ == "__main__":
                 value=data,
             )
 
-            sleep(2)
+            sleep(35)
 
     except Exception:
         raise
