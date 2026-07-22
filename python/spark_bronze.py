@@ -1,6 +1,4 @@
 from pyspark.sql import SparkSession
-import pyspark.sql.functions as F
-from pyspark.sql.types import StringType
 
 try:
     spark = (
@@ -10,7 +8,7 @@ try:
         .config("spark.cores.max", "1")
         .getOrCreate()
     )
-    
+
     df = (
         spark.readStream
         .format("kafka")
@@ -20,12 +18,15 @@ try:
         .load()
     )
 
-    query = (df.writeStream.format("parquet")
-    .option("path", "gs://bucket_market_data_bronze/raw")
-    .option("checkpointLocation", "gs://bucket_market_data_bronze/checkpoint_bronze")
-    .outputMode("append")
-    .trigger(processingTime="30 seconds")
-    .start())
+    query = (
+        df.writeStream
+        .format("parquet")
+        .option("path", "gs://bucket_market_data_bronze/raw")
+        .option("checkpointLocation", "gs://bucket_market_data_bronze/checkpoint_bronze")
+        .outputMode("append")
+        .trigger(processingTime="30 seconds")
+        .start()
+    )
 
     query.awaitTermination()
 
