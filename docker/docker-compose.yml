@@ -75,6 +75,7 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile.kafka_admin_client
+    restart: on-failure
     ports:
       - 5100:5100
     depends_on:
@@ -99,8 +100,8 @@ services:
     restart: on-failure
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://apache-spark-master:7077
     environment:
-      - SPARK_WORKER_MEMORY=3g
-      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_CORES=1
     depends_on:
       - apache-spark-master
     volumes:
@@ -111,8 +112,8 @@ services:
     restart: on-failure
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://apache-spark-master:7077
     environment:
-      - SPARK_WORKER_MEMORY=3g
-      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_CORES=1
     depends_on:
       - apache-spark-master
     volumes:
@@ -124,8 +125,8 @@ services:
     restart: on-failure
     command: /opt/spark/bin/spark-class org.apache.spark.deploy.worker.Worker spark://apache-spark-master:7077
     environment:
-      - SPARK_WORKER_MEMORY=3g
-      - SPARK_WORKER_CORES=2
+      - SPARK_WORKER_MEMORY=1g
+      - SPARK_WORKER_CORES=1
     depends_on:
       - apache-spark-master
     volumes:
@@ -144,29 +145,42 @@ services:
       - apache-spark-worker-3
   market_data_spark_bronze:
     container_name: market_data_spark_bronze
+    restart: on-failure
     build:
       context: ..
-      dockerfile: docker/Dockerfile.apache_spark_bronze_ingest
+      dockerfile: docker/Dockerfile.apache_spark_bronze
     depends_on:
       - market_data_raw_producer_1
-  market_data_silver:
+  market_data_spark_silver:
     container_name: market_data_spark_silver
+    restart: on-failure
     build:
       context:  ..
-      dockerfile: docker/Dockerfile.apache_spark_silver_batch
+      dockerfile: docker/Dockerfile.apache_spark_silver
     depends_on:
       - market_data_spark_bronze
 
-  kafka_ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka_ui
+  market_data_spark_gold:
+    container_name: market_data_spark_gold
     restart: on-failure
-    ports:
-      - 8080:8080
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=kafka_market_data_plataform_cluster
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka_broker_1:5091, kafka_broker_2:5092, kafka_broker_3:5093
-    depends_on:
-      - kafka_broker_1
-      - kafka_broker_2
-      - kafka_broker_3
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.apache_spark_gold
+    volumes:
+      - ../jars:/opt/spark/work-dir/jars:ro
+    # depends_on:
+    #   - market_data_spark_silver
+
+  # kafka_ui:
+  #   image: provectuslabs/kafka-ui:latest
+  #   container_name: kafka_ui
+  #   restart: on-failure
+  #   ports:
+  #     - 8080:8080
+  #   environment:
+  #     - KAFKA_CLUSTERS_0_NAME=kafka_market_data_plataform_cluster
+  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=kafka_broker_1:5091, kafka_broker_2:5092, kafka_broker_3:5093
+  #   depends_on:
+  #     - kafka_broker_1
+  #     - kafka_broker_2
+  #     - kafka_broker_3

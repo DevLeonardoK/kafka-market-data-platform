@@ -1,0 +1,16 @@
+FROM apache/spark:4.0.3
+
+WORKDIR /opt/spark/work-dir
+
+COPY credential/projeto_data_credential.json .
+COPY python/spark_gold.py .
+
+CMD ["/opt/spark/bin/spark-submit", \
+     "--jars", "/opt/spark/work-dir/jars/spark-4.0-bigquery-0.44.2.jar,/opt/spark/work-dir/jars/gcs-connector-hadoop3-2.2.21-shaded.jar", \
+     "--conf", "spark.hadoop.google.cloud.auth.service.account.enable=true", \
+     "--conf", "spark.hadoop.google.cloud.auth.service.account.json.keyfile=/opt/spark/work-dir/projeto_data_credential.json", \
+     #new
+     "--conf", "spark.hadoop.fs.AbstractFileSystem.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS", \ 
+     #old
+     "--conf", "spark.hadoop.fs.gs.impl=com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem", \
+     "spark_gold.py"]

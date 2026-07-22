@@ -7,7 +7,7 @@ try:
         SparkSession.builder
         .appName("market_data_spark")
         .master("spark://apache-spark-master:7077")
-        .config("spark.cores.max", "3")
+        .config("spark.cores.max", "1")
         .getOrCreate()
     )
     
@@ -20,11 +20,11 @@ try:
         .load()
     )
 
-    query = (df.writeStream.format("parquet")\
-    .option("path", "gs://bucket_market_data_bronze/raw")\
-    .option("checkpointLocation", "gs://bucket_market_data_bronze/checkpoint_bronze")\
-    .outputMode("append")\
-    .trigger(processingTime="30 seconds")\
+    query = (df.writeStream.format("parquet")
+    .option("path", "gs://bucket_market_data_bronze/raw")
+    .option("checkpointLocation", "gs://bucket_market_data_bronze/checkpoint_bronze")
+    .outputMode("append")
+    .trigger(processingTime="30 seconds")
     .start())
 
     query.awaitTermination()
