@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.types import StringType, TimestampType, StructField, StructType, FloatType, IntegerType
+from pyspark.sql.types import StringType, TimestampType, StructField, StructType, DoubleType, IntegerType
 
 try:
     spark = (
@@ -14,9 +14,9 @@ try:
         [
             StructField("id", IntegerType()),
             StructField("symbol", StringType()),
-            StructField("price", FloatType()),
+            StructField("price", DoubleType()),
             StructField("broker", StringType()),
-            StructField("quantity", FloatType()),
+            StructField("quantity", DoubleType()),
             StructField("currency", StringType()),
             StructField("exchange", StringType()),
             StructField("timestamp", TimestampType())
